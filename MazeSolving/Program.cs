@@ -36,7 +36,7 @@
                     ConvertingImageToBoolArrayTime = stw.Elapsed,
                     MazeType = type,
                     MazeSize = new Size(convertedMaze.Count, convertedMaze[0].Count)
-            };
+                };
 
                 for (int y = 0; y < convertedMaze.Count; y++)
                 {
@@ -61,7 +61,7 @@
                 Bitmap nodeMaze = Tree.CreateNodeMazeBitmapClassic(convertedMaze, tree);
                 stw.Stop();
                 tmpStats.TreeImageBuildTime = stw.Elapsed;
-                
+
                 nodeMaze.Save(@"C:\Users\90017522\Pictures\" + type.ToString() + "nodes.png", ImageFormat.Png);
 
                 foreach (SolverType solverType in Enum.GetValues(typeof(MazeType)))
@@ -102,8 +102,10 @@
                 }
 
                 Console.Write(tmpStats.ToString());
-                var input = Console.ReadLine();
+                //var input = Console.ReadLine();
             }
+
+            var input = Console.ReadLine();
         }
     }
 }
