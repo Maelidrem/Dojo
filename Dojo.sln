@@ -1,0 +1,41 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2035
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MazeSolving", "MazeSolving\MazeSolving.csproj", "{2475387A-87D2-423F-9346-BA16FDF20259}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Maze", "Maze\Maze.csproj", "{CBCE696E-63D7-437D-A5EF-3795BE90748A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2475387A-87D2-423F-9346-BA16FDF20259}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2475387A-87D2-423F-9346-BA16FDF20259}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2475387A-87D2-423F-9346-BA16FDF20259}.Debug|x86.ActiveCfg = Debug|x86
+		{2475387A-87D2-423F-9346-BA16FDF20259}.Debug|x86.Build.0 = Debug|x86
+		{2475387A-87D2-423F-9346-BA16FDF20259}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2475387A-87D2-423F-9346-BA16FDF20259}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2475387A-87D2-423F-9346-BA16FDF20259}.Release|x86.ActiveCfg = Release|Any CPU
+		{2475387A-87D2-423F-9346-BA16FDF20259}.Release|x86.Build.0 = Release|Any CPU
+		{CBCE696E-63D7-437D-A5EF-3795BE90748A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CBCE696E-63D7-437D-A5EF-3795BE90748A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CBCE696E-63D7-437D-A5EF-3795BE90748A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{CBCE696E-63D7-437D-A5EF-3795BE90748A}.Debug|x86.Build.0 = Debug|Any CPU
+		{CBCE696E-63D7-437D-A5EF-3795BE90748A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CBCE696E-63D7-437D-A5EF-3795BE90748A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CBCE696E-63D7-437D-A5EF-3795BE90748A}.Release|x86.ActiveCfg = Release|Any CPU
+		{CBCE696E-63D7-437D-A5EF-3795BE90748A}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8D0BD2E9-EF7F-4406-8B53-B66BCA466BC9}
+	EndGlobalSection
+EndGlobal
