@@ -48,8 +48,9 @@
             return Tree.BuildTree(convertedMaze);
         }
 
-        public static Bitmap CreateNodeMazeBitmap(List<List<bool>> maze, IEnumerable<Cell> tree)
+        public static Bitmap CreateNodeMazeBitmap(List<List<bool>> maze, List<Cell> tree)
         {
+            Cell cell;
             Bitmap nodeMaze = new Bitmap(maze[0].Count, maze.Count, PixelFormat.Format24bppRgb);
             using (Graphics grp = Graphics.FromImage(nodeMaze))
             {
@@ -62,7 +63,8 @@
                 coloredMaze.Add(new List<Color>());
                 for (int x = 0; x < maze[y].Count; x++)
                 {
-                    coloredMaze[y].Add(maze[y][x] ? Color.White : Color.Black);
+                    cell = tree.Find(o => o.Position.X == x && o.Position.Y == y);
+                    coloredMaze[y].Add(cell == null ? (maze[y][x] ? Color.White : Color.Black) : Color.Green);
                 }
             }
 
