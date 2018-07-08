@@ -33,7 +33,7 @@
             stats.Add("**** Tree ****");
             stats.Add("- number of cells : " + TreeNumberOfCells + " (" + 100 * TreeNumberOfCells / CorridorSpaces + "% of corridor)");
             stats.Add("- build time : " + TreeBuildTime.ToString("mm':'ss'.'fff"));
-            stats.Add("- image building time : " + TreeImageBuildTime);
+            stats.Add("- image building time : " + TreeImageBuildTime.ToString("mm':'ss'.'fff"));
             stats.Add("**** Solvers ****");
             foreach (SolverStats solverStats in SolverStats)
             {

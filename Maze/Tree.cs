@@ -50,12 +50,20 @@
 
         public static Bitmap CreateNodeMazeBitmap(List<List<bool>> maze, IEnumerable<Cell> tree)
         {
-            Cell cell;
-            Color color;
             Bitmap nodeMaze = new Bitmap(maze[0].Count, maze.Count, PixelFormat.Format24bppRgb);
             using (Graphics grp = Graphics.FromImage(nodeMaze))
             {
                 grp.FillRectangle(Brushes.White, 0, 0, nodeMaze.Width, nodeMaze.Height);
+            }
+
+            List<List<Color>> coloredMaze = new List<List<Color>>();
+            for (int y = 0; y < maze.Count; y++)
+            {
+                coloredMaze.Add(new List<Color>());
+                for (int x = 0; x < maze[y].Count; x++)
+                {
+                    coloredMaze[y].Add(maze[y][x] ? Color.White : Color.Black);
+                }
             }
 
             unsafe
@@ -71,13 +79,10 @@
                     byte* currentLine = ptrFirstPixel + (y * bitmapData.Stride);
                     for (int x = 0; x < widthInBytes; x = x + bytesPerPixel)
                     {
-                        cell = tree.Where(o => o.Position == new Point(x / 3, y)).FirstOrDefault();
-                        color = cell == null ? (maze[y][x / 3] ? Color.White : Color.Black) : Color.Green;
-
                         // calculate new pixel value
-                        currentLine[x] = color.B;
-                        currentLine[x + 1] = color.G;
-                        currentLine[x + 2] = color.R;
+                        currentLine[x] = coloredMaze[y][x / 3].B;
+                        currentLine[x + 1] = coloredMaze[y][x / 3].G;
+                        currentLine[x + 2] = coloredMaze[y][x / 3].R;
                     }
                 }
 
@@ -89,17 +94,27 @@
 
         public static Bitmap CreateSolvedMazeBitmap(List<List<bool>> maze, List<Cell> tree, List<int> mazeSolved)
         {
-            Tuple<int, int, Color> info;
-            Color color;
+            Point nullPoint = new Point(0, 0);
             List<Point> path = BuildPath(tree, mazeSolved);
             List<Color> colorGradient = GetColorGradient(Color.Blue, Color.Red, path.Count);
-            List<Tuple<int, int, Color>> pathAndColor = new List<Tuple<int, int, Color>>();
-            for (int i = 0; i < path.Count; i++)
+
+            List<List<Color>> coloredMaze = new List<List<Color>>();
+            for (int y = 0; y < maze.Count; y++)
             {
-                pathAndColor.Add(new Tuple<int, int, Color>(
-                    path[i].X,
-                    path[i].Y,
-                    colorGradient[i]));
+                coloredMaze.Add(new List<Color>());
+                for (int x = 0; x < maze[y].Count; x++)
+                {
+                    Point point = path.Find(o => o.X == x && o.Y == y);
+                    if (point == null || point == nullPoint)
+                    {
+                        coloredMaze[y].Add(maze[y][x] ? Color.White : Color.Black);
+                    }
+                    else
+                    {
+                        int i = path.IndexOf(point);
+                        coloredMaze[y].Add(colorGradient[i]);
+                    }
+                }
             }
 
             Bitmap nodeMaze = new Bitmap(maze[0].Count, maze.Count, PixelFormat.Format24bppRgb);
@@ -120,14 +135,11 @@
                 {
                     byte* currentLine = ptrFirstPixel + (y * bitmapData.Stride);
                     for (int x = 0; x < widthInBytes; x = x + bytesPerPixel)
-                    {
-                        info = pathAndColor.Find(o => o.Item1 == x / 3 && o.Item2 == y);
-                        color = info == null ? (maze[y][x / 3] ? Color.White : Color.Black) : info.Item3;
-
+                    {                        
                         // calculate new pixel value
-                        currentLine[x] = color.B;
-                        currentLine[x + 1] = color.G;
-                        currentLine[x + 2] = color.R;
+                        currentLine[x] = coloredMaze[y][x / 3].B;
+                        currentLine[x + 1] = coloredMaze[y][x / 3].G;
+                        currentLine[x + 2] = coloredMaze[y][x / 3].R;
                     }
                 }
 
