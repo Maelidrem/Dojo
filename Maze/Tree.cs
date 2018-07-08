@@ -41,72 +41,97 @@
             return null;
         }
 
-        public static Bitmap CreateNodeMazeBitmapLockBitsMarshal(List<List<bool>> maze, IEnumerable<Cell> tree)
+        public static List<Cell> GetTree(MazeType type)
         {
-            Bitmap nodeMaze = new Bitmap(maze[0].Count, maze.Count);
-            Cell tmpCell = null;
-            BitmapData bitmapData = nodeMaze.LockBits(new Rectangle(0, 0, nodeMaze.Width, nodeMaze.Height), ImageLockMode.ReadWrite, nodeMaze.PixelFormat);
-
-            int bytesPerPixel = Bitmap.GetPixelFormatSize(nodeMaze.PixelFormat) / 8;
-            int byteCount = bitmapData.Stride * nodeMaze.Height;
-            byte[] pixels = new byte[byteCount];
-            IntPtr ptrFirstPixel = bitmapData.Scan0;
-            Marshal.Copy(ptrFirstPixel, pixels, 0, pixels.Length);
-            int heightInPixels = bitmapData.Height;
-            int widthInBytes = bitmapData.Width * bytesPerPixel;
-
-            for (int y = 0; y < heightInPixels; y++)
-            {
-                int currentLine = y * bitmapData.Stride;
-                for (int x = 0; x < widthInBytes; x = x + bytesPerPixel)
-                {
-                    tmpCell = tree.Where(o => o.Position.X == x && o.Position.Y == y).FirstOrDefault();
-                    // calculate new pixel value
-                    pixels[currentLine + x] = tmpCell == null ? (maze[y][x / bytesPerPixel] ? Color.White.B : Color.Black.B) : Color.Green.B;
-                    pixels[currentLine + x + 1] = tmpCell == null ? (maze[y][x / bytesPerPixel] ? Color.White.G : Color.Black.G) : Color.Green.G;
-                    pixels[currentLine + x + 2] = tmpCell == null ? (maze[y][x / bytesPerPixel] ? Color.White.R : Color.Black.R) : Color.Green.R;
-                }
-            }
-
-            // copy modified bytes back
-            Marshal.Copy(pixels, 0, ptrFirstPixel, pixels.Length);
-            nodeMaze.UnlockBits(bitmapData);
-            return nodeMaze;
+            Bitmap maze = Tree.GetMaze(type);
+            List<List<bool>> convertedMaze = Tree.ConvertMazeToBool(maze, type);
+            return Tree.BuildTree(convertedMaze);
         }
 
-        public static Bitmap CreateNodeMazeBitmapClassic(List<List<bool>> maze, IEnumerable<Cell> tree)
+        public static Bitmap CreateNodeMazeBitmap(List<List<bool>> maze, IEnumerable<Cell> tree)
         {
-            Bitmap nodeMaze = new Bitmap(maze[0].Count, maze.Count);
-            Cell tmpCell = null;
-            for (int y = 0; y < maze.Count; y++)
+            Cell cell;
+            Color color;
+            Bitmap nodeMaze = new Bitmap(maze[0].Count, maze.Count, PixelFormat.Format24bppRgb);
+            using (Graphics grp = Graphics.FromImage(nodeMaze))
             {
-                for (int x = 0; x < maze[y].Count; x++)
+                grp.FillRectangle(Brushes.White, 0, 0, nodeMaze.Width, nodeMaze.Height);
+            }
+
+            unsafe
+            {
+                BitmapData bitmapData = nodeMaze.LockBits(new Rectangle(0, 0, nodeMaze.Width, nodeMaze.Height), ImageLockMode.ReadWrite, nodeMaze.PixelFormat);
+                int bytesPerPixel = Bitmap.GetPixelFormatSize(nodeMaze.PixelFormat) / 8;
+                int heightInPixels = bitmapData.Height;
+                int widthInBytes = bitmapData.Width * bytesPerPixel;
+                byte* ptrFirstPixel = (byte*)bitmapData.Scan0;
+
+                for (int y = 0; y < heightInPixels; y++)
                 {
-                    tmpCell = tree.Where(o => o.Position == new Point(x, y)).FirstOrDefault();
-                    nodeMaze.SetPixel(x, y, tmpCell == null ? (maze[y][x] ? Color.White : Color.Black) : Color.Green);
+                    byte* currentLine = ptrFirstPixel + (y * bitmapData.Stride);
+                    for (int x = 0; x < widthInBytes; x = x + bytesPerPixel)
+                    {
+                        cell = tree.Where(o => o.Position == new Point(x / 3, y)).FirstOrDefault();
+                        color = cell == null ? (maze[y][x / 3] ? Color.White : Color.Black) : Color.Green;
+
+                        // calculate new pixel value
+                        currentLine[x] = color.B;
+                        currentLine[x + 1] = color.G;
+                        currentLine[x + 2] = color.R;
+                    }
                 }
+
+                nodeMaze.UnlockBits(bitmapData);
             }
 
             return nodeMaze;
         }
 
-        public static Bitmap CreateSolvedMazeBitmapClassic(List<List<bool>> maze, List<Cell> tree, List<int> mazeSolved)
+        public static Bitmap CreateSolvedMazeBitmap(List<List<bool>> maze, List<Cell> tree, List<int> mazeSolved)
         {
+            Tuple<int, int, Color> info;
+            Color color;
             List<Point> path = BuildPath(tree, mazeSolved);
             List<Color> colorGradient = GetColorGradient(Color.Blue, Color.Red, path.Count);
-
-            Bitmap nodeMaze = new Bitmap(maze[0].Count, maze.Count);
-            for (int y = 0; y < maze.Count; y++)
+            List<Tuple<int, int, Color>> pathAndColor = new List<Tuple<int, int, Color>>();
+            for (int i = 0; i < path.Count; i++)
             {
-                for (int x = 0; x < maze[y].Count; x++)
-                {
-                    nodeMaze.SetPixel(x, y, maze[y][x] ? Color.White : Color.Black);
-                }
+                pathAndColor.Add(new Tuple<int, int, Color>(
+                    path[i].X,
+                    path[i].Y,
+                    colorGradient[i]));
             }
 
-            for(int i = 0; i < path.Count; i++)
+            Bitmap nodeMaze = new Bitmap(maze[0].Count, maze.Count, PixelFormat.Format24bppRgb);
+            using (Graphics grp = Graphics.FromImage(nodeMaze))
             {
-                nodeMaze.SetPixel(path[i].X, path[i].Y, colorGradient[i]);
+                grp.FillRectangle(Brushes.White, 0, 0, nodeMaze.Width, nodeMaze.Height);
+            }
+
+            unsafe
+            {
+                BitmapData bitmapData = nodeMaze.LockBits(new Rectangle(0, 0, nodeMaze.Width, nodeMaze.Height), ImageLockMode.ReadWrite, nodeMaze.PixelFormat);
+                int bytesPerPixel = Bitmap.GetPixelFormatSize(nodeMaze.PixelFormat) / 8;
+                int heightInPixels = bitmapData.Height;
+                int widthInBytes = bitmapData.Width * bytesPerPixel;
+                byte* ptrFirstPixel = (byte*)bitmapData.Scan0;
+
+                for (int y = 0; y < heightInPixels; y++)
+                {
+                    byte* currentLine = ptrFirstPixel + (y * bitmapData.Stride);
+                    for (int x = 0; x < widthInBytes; x = x + bytesPerPixel)
+                    {
+                        info = pathAndColor.Find(o => o.Item1 == x / 3 && o.Item2 == y);
+                        color = info == null ? (maze[y][x / 3] ? Color.White : Color.Black) : info.Item3;
+
+                        // calculate new pixel value
+                        currentLine[x] = color.B;
+                        currentLine[x + 1] = color.G;
+                        currentLine[x + 2] = color.R;
+                    }
+                }
+
+                nodeMaze.UnlockBits(bitmapData);
             }
 
             return nodeMaze;

@@ -1,5 +1,7 @@
 ﻿namespace MazeSolving.Test
 {
+    using Maze;
+    using MazeSolving.Solvers;
     using NUnit.Framework;
     using System;
     using System.Collections.Generic;
@@ -13,6 +15,10 @@
         [Test]
         public void Test1()
         {
+            List<Cell> tree = Tree.GetTree(MazeType.Tiny);
+            ISolver solver = new DojoSolver();
+            List<int> solution = solver.Solve(tree);
+
             Assert.Pass();
         }
     }

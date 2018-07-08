@@ -59,12 +59,11 @@
                 tmpStats.TreeNumberOfCells = tree.Count;
 
                 stw.Restart();
-                Bitmap nodeMaze = Tree.CreateNodeMazeBitmapClassic(convertedMaze, tree);
+                Bitmap nodeMaze = Tree.CreateNodeMazeBitmap(convertedMaze, tree);
                 stw.Stop();
                 tmpStats.TreeImageBuildTime = stw.Elapsed;
-
                 nodeMaze.Save(dir + type.ToString() + "nodes.png", ImageFormat.Png);
-
+                
                 foreach (SolverType solverType in Enum.GetValues(typeof(MazeType)))
                 {
                     ISolver solver = new DummySolver();
@@ -102,7 +101,7 @@
                         }
 
                         stw.Restart();
-                        Bitmap solvedMaze = Tree.CreateSolvedMazeBitmapClassic(convertedMaze, tree, mazeSolved);
+                        Bitmap solvedMaze = Tree.CreateSolvedMazeBitmap(convertedMaze, tree, mazeSolved);
                         stw.Stop();
                         tmpSolverStats.ResultImageBuildTime = stw.Elapsed;
 
