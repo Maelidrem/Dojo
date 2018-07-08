@@ -9,7 +9,7 @@
     {
         public List<int> Solve(IEnumerable<Cell> tree)
         {
-            return new List<int>();
+            return null;
         }
 
         public SolverType GetSolverType()

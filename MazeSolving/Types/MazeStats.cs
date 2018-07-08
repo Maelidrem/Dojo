@@ -25,16 +25,17 @@
         public override string ToString()
         {
             List<string> stats = new List<string>();
-            stats.Add(string.Empty);
+            stats.Add(Environment.NewLine);
             stats.Add("==== Maze name : " + MazeType.ToString() + " ====");
             stats.Add("- maze conversion time : " + ConvertingImageToBoolArrayTime.ToString("mm':'ss'.'fff"));
             stats.Add("- size : " + MazeSize.Width + "x" + MazeSize.Height + "px (" + MazeSize.Width * MazeSize.Height + "px)");
             stats.Add("- corridor : " + CorridorSpaces + " (" + MazeProportionOfCorridor.ToString() + "% of maze size)");
-            stats.Add("---- Tree ----");
+            stats.Add("**** Tree ****");
             stats.Add("- number of cells : " + TreeNumberOfCells + " (" + 100 * TreeNumberOfCells / CorridorSpaces + "% of corridor)");
             stats.Add("- build time : " + TreeBuildTime.ToString("mm':'ss'.'fff"));
             stats.Add("- image building time : " + TreeImageBuildTime);
-            foreach(SolverStats solverStats in SolverStats)
+            stats.Add("**** Solvers ****");
+            foreach (SolverStats solverStats in SolverStats)
             {
                 stats.Add("---- Solver : " + solverStats.SolverType + " ----");
                 stats.Add("- number of nodes : " + solverStats.NumberOfNodeInSolution);

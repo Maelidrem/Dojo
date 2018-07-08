@@ -15,6 +15,7 @@
         static Stopwatch stw = new Stopwatch();
         static void Main(string[] args)
         {
+            string dir = @"C:\Users\90017522\Pictures\Maze\";
             IEnumerable<MazeType> types = new List<MazeType>()
             {
                 MazeType.Tiny,
@@ -62,7 +63,7 @@
                 stw.Stop();
                 tmpStats.TreeImageBuildTime = stw.Elapsed;
 
-                nodeMaze.Save(@"C:\Users\90017522\Pictures\" + type.ToString() + "nodes.png", ImageFormat.Png);
+                nodeMaze.Save(dir + type.ToString() + "nodes.png", ImageFormat.Png);
 
                 foreach (SolverType solverType in Enum.GetValues(typeof(MazeType)))
                 {
@@ -83,6 +84,11 @@
                         List<int> mazeSolved = solver.Solve(tree);
                         stw.Stop();
 
+                        if (mazeSolved == null)
+                        {
+                            continue;
+                        }
+
                         SolverStats tmpSolverStats = new SolverStats(solver.GetSolverType())
                         {
                             SolvingTime = stw.Elapsed,
@@ -90,12 +96,17 @@
                             PathLength = Tree.GetPathLength(tree, mazeSolved)
                         };
 
+                        if (mazeSolved.Count == 0)
+                        {
+                            continue;
+                        }
+
                         stw.Restart();
                         Bitmap solvedMaze = Tree.CreateSolvedMazeBitmapClassic(convertedMaze, tree, mazeSolved);
                         stw.Stop();
                         tmpSolverStats.ResultImageBuildTime = stw.Elapsed;
 
-                        solvedMaze.Save(@"C:\Users\90017522\Pictures\" + type.ToString() + "Solved" + solver.GetSolverType().ToString() + ".png", ImageFormat.Png);
+                        solvedMaze.Save(dir + type.ToString() + "Solved" + solver.GetSolverType().ToString() + ".png", ImageFormat.Png);
 
                         tmpStats.SolverStats.Add(tmpSolverStats);
                     }
